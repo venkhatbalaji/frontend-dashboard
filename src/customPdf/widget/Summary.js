@@ -20,6 +20,20 @@ const Branches = ({
   const horizontalLineStartX =
     direction === "right" ? startX - horizontalLength + 25 : startX + horizontalLength;
 
+  // The right-side trunk must stay anchored to the "Number of Residents" box
+  // (fixed right edge at x=415, vertical center at y=345 in the parent SVG)
+  // and reach out to whichever branch is furthest from it. Its x-position
+  // has to track each branch's offsetX (all branches in a group share one),
+  // since that's what actually moves the branch lines/boxes — a fixed x
+  // here would drift out of alignment whenever offsetX changes.
+  const RIGHT_ANCHOR_X = 415;
+  const RIGHT_ANCHOR_Y = 345;
+  const commonOffsetX = branches[0]?.offsetX || 0;
+  const trunkX = direction === "right" ? startX + commonOffsetX : startX - commonOffsetX;
+  const branchYs = branches.map((b) => verticalLineStartY + (b?.offsetY || 0));
+  const trunkTopY = Math.min(RIGHT_ANCHOR_Y, ...branchYs);
+  const trunkBottomY = Math.max(RIGHT_ANCHOR_Y, ...branchYs);
+
   return (
     <>
       {/* Short horizontal line from main point */}
@@ -37,10 +51,10 @@ const Branches = ({
       {
         direction === "right" && (
           <line
-            x1={415}
-            y1={345}
-            x2={430}
-            y2={345}
+            x1={RIGHT_ANCHOR_X}
+            y1={RIGHT_ANCHOR_Y}
+            x2={trunkX}
+            y2={RIGHT_ANCHOR_Y}
             stroke={colors.border}
             strokeWidth="1"
           />
@@ -49,10 +63,10 @@ const Branches = ({
       {/* Vertical line (only if multiple branches) */}
       {branches.length > 1 && (
         <line
-          x1={428}
-          y1={280}
-          x2={428}
-          y2={410}
+          x1={trunkX}
+          y1={trunkTopY}
+          x2={trunkX}
+          y2={trunkBottomY}
           stroke={colors.border}
           strokeWidth="1"
         />
@@ -135,7 +149,103 @@ const Branches = ({
   );
 };
 
-const Summary = ({ branchesData = [], leftBranchesData = [], totalViolators, title, imageSrc, imageAlt, CountryFlag, countryName, centerLabel1, centerLabel2, leftBranchLabel, rightBranchLabel, leftBranchValue = "0", rightBranchValue = "0", status, data }) => {
+const GoldenBranch = ({ boxText, boxLabel }) => {
+  // Positioned to the left of the "Total Expats" count, clear of the
+  // country flag (CSS-overlaid top-right) and the Inside/Outside UAE boxes.
+  const boxCX = -20;
+  const boxCY = 220;
+  const boxWidth = 104;
+  const boxHeight = 36;
+  const boxX = boxCX - boxWidth / 2;
+  const boxY = boxCY - boxHeight / 2;
+
+  return (
+    <g>
+      <defs>
+        <linearGradient id="goldenBranchFill" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor={colors.goldShineLight} />
+          <stop offset="55%" stopColor={colors.goldShineMid} />
+          <stop offset="100%" stopColor={colors.goldShineDeep} />
+          <animateTransform
+            attributeName="gradientTransform"
+            type="translate"
+            values="-0.3 0; 0.3 0; -0.3 0"
+            dur="3.2s"
+            repeatCount="indefinite"
+          />
+        </linearGradient>
+        <radialGradient id="goldenBranchGlow">
+          <stop offset="0%" stopColor={colors.goldShineGlow} />
+          <stop offset="100%" stopColor={colors.goldShineGlow} stopOpacity="0" />
+        </radialGradient>
+      </defs>
+
+      {/* Pulsing glow behind the box */}
+      <circle cx={boxCX} cy={boxCY} r={boxWidth / 2 + 6} fill="url(#goldenBranchGlow)">
+        <animate attributeName="r" values={`${boxWidth / 2 + 4};${boxWidth / 2 + 16};${boxWidth / 2 + 4}`} dur="2.4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.55;1;0.55" dur="2.4s" repeatCount="indefinite" />
+      </circle>
+
+      {/* Golden box */}
+      <rect
+        x={boxX}
+        y={boxY}
+        width={boxWidth}
+        height={boxHeight}
+        rx={6}
+        ry={6}
+        fill="url(#goldenBranchFill)"
+        stroke={colors.goldShineDeep}
+        strokeWidth="1"
+      />
+      <text
+        x={boxCX}
+        y={boxCY}
+        fontWeight="bold"
+        fontSize="15"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fill={colors.textBlack}
+      >
+        {boxText}
+      </text>
+      <foreignObject x={boxX - 8} y={boxY + boxHeight + 4} width={boxWidth + 16} height={50}>
+        <div
+          xmlns="http://www.w3.org/1999/xhtml"
+          style={{
+            fontSize: "13px",
+            fontWeight: 600,
+            color: colors.goldShineDeep,
+            textAlign: "center",
+            wordWrap: "break-word",
+            lineHeight: "1.2"
+          }}
+        >
+          {boxLabel}
+        </div>
+      </foreignObject>
+
+      {/* Sparkle accents — kept clear of the connector's top-right landing
+          point and the label text below the box, so they read as accents
+          rather than stray marks. */}
+      {[
+        { x: boxX - 12, y: boxY - 4, s: 5, begin: "0s" },
+        { x: boxX - 14, y: boxCY, s: 4, begin: "0.6s" },
+        { x: boxX + boxWidth + 10, y: boxY + boxHeight + 30, s: 4.5, begin: "1.2s" },
+      ].map((spark, i) => (
+        <path
+          key={i}
+          d={`M${spark.x},${spark.y - spark.s} L${spark.x + spark.s * 0.3},${spark.y - spark.s * 0.3} L${spark.x + spark.s},${spark.y} L${spark.x + spark.s * 0.3},${spark.y + spark.s * 0.3} L${spark.x},${spark.y + spark.s} L${spark.x - spark.s * 0.3},${spark.y + spark.s * 0.3} L${spark.x - spark.s},${spark.y} L${spark.x - spark.s * 0.3},${spark.y - spark.s * 0.3} Z`}
+          fill={colors.goldShineLight}
+        >
+          <animate attributeName="opacity" values="0;1;0" dur="1.8s" begin={spark.begin} repeatCount="indefinite" />
+        </path>
+      ))}
+    </g>
+  );
+};
+
+const Summary = ({ branchesData = [], leftBranchesData = [], goldenBranchData = null, totalViolators, title, imageSrc, imageAlt, CountryFlag, countryName, centerLabel1, centerLabel2, leftBranchLabel, rightBranchLabel, leftBranchValue = "0", rightBranchValue = "0", status, data }) => {
 
   const branches = branchesData;
   const leftBranches = leftBranchesData;
@@ -396,7 +506,12 @@ const Summary = ({ branchesData = [], leftBranchesData = [], totalViolators, tit
                 horizontalLength={25} // Adjust this value, e.g., 25 to shorten
               />
             )}
-            
+
+            {/* Golden Visa Holders — standalone shining callout, separated from the plain boxes above */}
+            {goldenBranchData && (
+              <GoldenBranch boxText={goldenBranchData.boxText} boxLabel={goldenBranchData.boxLabel} />
+            )}
+
           </svg>
         </div>
       }

@@ -117,6 +117,11 @@ export const colors = {
   nationalityIconText: '#6b5a4a',
   nationalityOtherVisasBranch: '#FDEADA',
   nationalityGoldenVisaBranch: '#E7BB62',
+  // Golden Visa "shine" callout (Summary widget)
+  goldShineLight: '#FFE9A8',
+  goldShineMid: '#F0C05A',
+  goldShineDeep: '#B8860B',
+  goldShineGlow: 'rgba(240, 192, 90, 0.55)',
 
   // Typography - common font settings
   fontFamily: 'sf-pro-text',

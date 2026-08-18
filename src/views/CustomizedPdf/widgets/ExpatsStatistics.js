@@ -513,32 +513,38 @@ export default function ExpatsStatistics({ filters = {}, emiratesConfigValue }) 
   };
 
   // Prepare right side branches for Summary component (Right column - Expats)
+  // Golden Visa Holders is intentionally excluded here — it renders as its
+  // own standout "shining" callout (see prepareGoldenBranch below) instead
+  // of being grouped with the plain Inside/Outside UAE boxes.
   const prepareRightBranches = (summaryData) => {
     if (!summaryData) return [];
 
     return [
-      { 
-        offsetY: -110,
-        offsetX: 93,
-        labelY: -22,
-        boxText: formatNumberForDisplay(summaryData?.golden_visa_holder || 0),
-        boxLabel: translation[language]?.["Golden Visa Holders"] || "Golden\nVisa\nHolders"
-      },
-      { 
-        offsetY: -45, 
-        offsetX: 93,
+      {
+        offsetY: -80,
+        offsetX: 90,
         labelY: -12,
         boxText: formatNumberForDisplay(summaryData?.resident_inside_country || 0),
         boxLabel: translation[language]?.["Inside UAE"] || "Inside\nthe\nUAE"
       },
-      { 
-        offsetY: 20, 
-        offsetX: 93,
+      {
+        offsetY: -10,
+        offsetX: 90,
         labelY: -12,
         boxText: formatNumberForDisplay(summaryData?.resident_outside_country || 0),
         boxLabel: translation[language]?.["Outside UAE"] || "Outside\nthe\nUAE"
       },
     ];
+  };
+
+  // Prepare the standalone Golden Visa Holders callout (Right column - Expats)
+  const prepareGoldenBranch = (summaryData) => {
+    if (!summaryData) return null;
+
+    return {
+      boxText: formatNumberForDisplay(summaryData?.golden_visa_holder || 0),
+      boxLabel: translation[language]?.["Golden Visa Holders"] || "Golden\nVisa\nHolders"
+    };
   };
 
   // Prepare left side branch for Summary component (Right column - Expats)
@@ -1032,6 +1038,7 @@ export default function ExpatsStatistics({ filters = {}, emiratesConfigValue }) 
                     rightBranchValue={formatNumberForDisplay(componentProps?.totalExpats?.data?.total_residents)}
                     branchesData={prepareRightBranches(componentProps?.totalExpats?.data)}
                     leftBranchesData={prepareLeftBranches(componentProps?.totalExpats?.data)}
+                    goldenBranchData={prepareGoldenBranch(componentProps?.totalExpats?.data)}
                     CountryFlag={(() => {
                       if (!selectedCountry) return null;
                       const iso2Code = getISO2Code(selectedCountry);
