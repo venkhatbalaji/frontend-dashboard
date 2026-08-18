@@ -22,11 +22,40 @@ const DirectionArrow = ({ value }) => {
     >
       <path
         d="M12 4L12 20M12 4L6 10M12 4L18 10"
-        stroke={isNegative ? colors.negative : colors.primary}
+        stroke={isNegative ? colors.nationalityProhibitionRed : colors.primary}
         strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+    </svg>
+  );
+};
+
+const PercentIcon = ({ value }) => {
+  const isPositive = value != null && value >= 0;
+  return (
+    <svg width="100%" height="100%" viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {isPositive ? (
+        <>
+          {/* Wider triangle top, pointing up */}
+          <polygon points="1,15 23,15 12,1" fill={colors.nationalityIconFill} stroke={colors.border} strokeWidth="0.8" strokeLinejoin="round" />
+          {/* Rectangle bottom */}
+          <rect x="4" y="15" width="16" height="14" rx="1" fill={colors.nationalityIconFill} stroke={colors.border} strokeWidth="0.8" />
+          {/* Cover seam */}
+          <rect x="4.5" y="12.5" width="15" height="4" fill={colors.nationalityIconFill} />
+          <text x="12" y="21" textAnchor="middle" dominantBaseline="central" fontSize={colors.fontSizeSvgIcon} fontWeight="bold" fill={colors.nationalityIconText}>%</text>
+        </>
+      ) : (
+        <>
+          {/* Rectangle top */}
+          <rect x="4" y="1" width="16" height="14" rx="1" fill={colors.nationalityIconFill} stroke={colors.border} strokeWidth="0.8" />
+          {/* Wider triangle bottom, pointing down */}
+          <polygon points="1,15 23,15 12,29" fill={colors.nationalityIconFill} stroke={colors.border} strokeWidth="0.8" strokeLinejoin="round" />
+          {/* Cover seam */}
+          <rect x="4.5" y="13.5" width="15" height="4" fill={colors.nationalityIconFill} />
+          <text x="12" y="9" textAnchor="middle" dominantBaseline="central" fontSize={colors.fontSizeSvgIcon} fontWeight="bold" fill={colors.nationalityIconText}>%</text>
+        </>
+      )}
     </svg>
   );
 };
@@ -49,6 +78,7 @@ export default function UpdateMetrics({ totalUpdates, increasePercentage, langua
           label: tr("Increase percentage"),
           formatFn: (val) => (val != null ? (val === 0 ? "0" : `${val.toFixed(2)}%`) : "-"),
           suffixElement: <DirectionArrow value={increasePercentage} />,
+          borderColor: increasePercentage < 0 ? colors.nationalityProhibitionRed : colors.primary,
         },
       ];
     },
@@ -63,17 +93,7 @@ export default function UpdateMetrics({ totalUpdates, increasePercentage, langua
     [totalUpdates, increasePercentage],
   );
 
-  const percentIcon = (
-    <svg width="100%" height="100%" viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Rectangle top */}
-      <rect x="4" y="1" width="16" height="14" rx="1" fill={colors.nationalityIconFill} stroke={colors.border} strokeWidth="0.8" />
-      {/* Wider triangle bottom */}
-      <polygon points="1,15 23,15 12,29" fill={colors.nationalityIconFill} stroke={colors.border} strokeWidth="0.8" strokeLinejoin="round" />
-      {/* Cover seam */}
-      <rect x="4.5" y="13.5" width="15" height="4" fill={colors.nationalityIconFill} />
-      <text x="12" y="9" textAnchor="middle" dominantBaseline="central" fontSize={colors.fontSizeSvgIcon} fontWeight="bold" fill={colors.nationalityIconText}>%</text>
-    </svg>
-  );
+  const percentIcon = <PercentIcon value={increasePercentage} />;
 
   return (
     <SectionCard

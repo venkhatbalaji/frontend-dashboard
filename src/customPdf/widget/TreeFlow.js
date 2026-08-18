@@ -404,8 +404,8 @@ export default function TreeFlow({
       let suffix = "";
       if (row.suffix) suffix = row.suffix;
 
-      const borderCol = cellStyle.borderColor || colors.border;
-      const bgCol = cellStyle.bgColor || "transparent";
+      const borderCol = row.borderColor || cellStyle.borderColor || colors.border;
+      const bgCol = row.bgColor || cellStyle.bgColor || "transparent";
 
       const boxX = cellsLeft;
       const labelX = NO_COL_LABEL_LEFT;
@@ -602,6 +602,8 @@ TreeFlow.propTypes = {
       suffix: PropTypes.string,
       suffixElement: PropTypes.node,
       formatFn: PropTypes.func,
+      borderColor: PropTypes.string,
+      bgColor: PropTypes.string,
     }),
   ),
   data: PropTypes.object,
