@@ -1,6 +1,7 @@
 import React from "react";
 import SectionCard from "./SectionCard";
 import { formatNumber } from "@/utils/helper";
+import { colors } from "../colors";
 
 const UAEPopulationSummaryViolator = ({ 
   title,
@@ -88,7 +89,7 @@ const UAEPopulationSummaryViolator = ({
               y="145"
               textAnchor="middle"
               fontSize="20px"
-              fontFamily="Arial"
+              fontFamily={colors.fontFamily}
             >
               {centerLabel1}
             </text>
@@ -97,7 +98,7 @@ const UAEPopulationSummaryViolator = ({
               y="150"
               textAnchor="middle"
               fontSize="20px"
-              fontFamily="Arial"
+              fontFamily={colors.fontFamily}
             >
               {centerLabel2}
             </text>
@@ -107,7 +108,7 @@ const UAEPopulationSummaryViolator = ({
               textAnchor="middle"
               fontSize="26px"
               fontWeight="bold"
-              fontFamily="Arial"
+              fontFamily={colors.fontFamily}
               {...totalTextStyle}
             >
               {typeof total === 'number' ? formatNumber(total) : total}
@@ -192,7 +193,7 @@ const UAEPopulationSummaryViolator = ({
                             textAlign: "center",
                             fontWeight: "bold",
                             fontSize: "22px",
-                            fontFamily: "Arial",
+                            fontFamily: colors.fontFamily,
                             wordWrap: "break-word",
                             overflowWrap: "break-word",
                             lineHeight: "1.2",
@@ -217,7 +218,7 @@ const UAEPopulationSummaryViolator = ({
                           style={{
                             textAlign: "center",
                             fontSize: "24px",
-                            fontFamily: "Arial",
+                            fontFamily: colors.fontFamily,
                             wordWrap: "break-word",
                             overflowWrap: "break-word",
                             lineHeight: "1.3",

@@ -43,7 +43,7 @@ const PercentIcon = ({ value }) => {
           <rect x="4" y="15" width="16" height="14" rx="1" fill={colors.nationalityIconFill} stroke={colors.border} strokeWidth="0.8" />
           {/* Cover seam */}
           <rect x="4.5" y="12.5" width="15" height="4" fill={colors.nationalityIconFill} />
-          <text x="12" y="21" textAnchor="middle" dominantBaseline="central" fontSize={colors.fontSizeSvgIcon} fontWeight="bold" fill={colors.nationalityIconText}>%</text>
+          <text x="12" y="21" textAnchor="middle" dominantBaseline="central" fontSize={colors.fontSizeSvgIcon} fontFamily={colors.fontFamily} fontWeight="bold" fill={colors.nationalityIconText}>%</text>
         </>
       ) : (
         <>
@@ -53,7 +53,7 @@ const PercentIcon = ({ value }) => {
           <polygon points="1,15 23,15 12,29" fill={colors.nationalityIconFill} stroke={colors.border} strokeWidth="0.8" strokeLinejoin="round" />
           {/* Cover seam */}
           <rect x="4.5" y="13.5" width="15" height="4" fill={colors.nationalityIconFill} />
-          <text x="12" y="9" textAnchor="middle" dominantBaseline="central" fontSize={colors.fontSizeSvgIcon} fontWeight="bold" fill={colors.nationalityIconText}>%</text>
+          <text x="12" y="9" textAnchor="middle" dominantBaseline="central" fontSize={colors.fontSizeSvgIcon} fontFamily={colors.fontFamily} fontWeight="bold" fill={colors.nationalityIconText}>%</text>
         </>
       )}
     </svg>

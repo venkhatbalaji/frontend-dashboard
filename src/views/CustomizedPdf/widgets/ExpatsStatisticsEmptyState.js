@@ -146,7 +146,7 @@ export default function ExpatsStatisticsEmptyState() {
                 >
                   <div
                     style={{
-                      fontFamily: "'SF Pro Text', sans-serif",
+                      fontFamily: colors.fontFamily,
                       fontWeight: 600,
                       fontSize: "16px",
                       lineHeight: "24px",
@@ -167,7 +167,7 @@ export default function ExpatsStatisticsEmptyState() {
                 >
                   <Text
                     style={{
-                      fontFamily: "'SF Pro Text', sans-serif",
+                      fontFamily: colors.fontFamily,
                       fontWeight: 400,
                       fontSize: "14px",
                       lineHeight: "22px",

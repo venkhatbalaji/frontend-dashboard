@@ -70,12 +70,12 @@ const PdfBarChart = ({
                 {(chartImageSubtitle || chartImageLabel) && (
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
                     {chartImageSubtitle && (
-                      <div style={{ fontSize: "10px", color: colors.textDescription, marginBottom: "4px" }}>
+                      <div style={{ fontSize: "10px", color: colors.textDescription, marginBottom: "4px", fontFamily: colors.fontFamily }}>
                         {chartImageSubtitle}
                       </div>
                     )}
                     {chartImageLabel && (
-                      <div style={{ fontSize: "13px", fontWeight: colors.fontWeightBold, color: colors.textSecondary }}>
+                      <div style={{ fontSize: "13px", fontWeight: colors.fontWeightBold, color: colors.textSecondary, fontFamily: colors.fontFamily }}>
                         {chartImageLabel}
                       </div>
                     )}

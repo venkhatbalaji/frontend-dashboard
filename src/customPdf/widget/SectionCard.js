@@ -142,12 +142,12 @@ const SectionCard = ({
                 </div>
               ))}
           {title && (
-            <Text size="sm" style={{ color: colors.textSecondary, lineHeight: "1.2", ...titleStyle }}>{title}</Text>
+            <Text size="sm" style={{ color: colors.textSecondary, lineHeight: "1.2", fontFamily: colors.fontFamily, ...titleStyle }}>{title}</Text>
           )}
         </div>
       );
     }
-    
+
     // Default: Show title below icon vertically
     return (
       <div
@@ -199,7 +199,7 @@ const SectionCard = ({
               </div>
             ))}
         {title && (
-          <Text size="sm" style={{ color: colors.textSecondary, marginTop: "10px", lineHeight: "1.2", ...titleStyle }}>{title}</Text>
+          <Text size="sm" style={{ color: colors.textSecondary, marginTop: "10px", lineHeight: "1.2", fontFamily: colors.fontFamily, ...titleStyle }}>{title}</Text>
         )}
       </div>
     );

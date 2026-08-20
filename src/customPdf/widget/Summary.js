@@ -114,6 +114,7 @@ const Branches = ({
               y={0}
               fontWeight="bold"
               fontSize="15"
+              fontFamily={colors.fontFamily}
               textAnchor="middle"
               dominantBaseline="middle"
               fill="black"
@@ -203,6 +204,7 @@ const GoldenBranch = ({ boxText, boxLabel }) => {
         y={boxCY}
         fontWeight="bold"
         fontSize="15"
+        fontFamily={colors.fontFamily}
         textAnchor="middle"
         dominantBaseline="middle"
         fill={colors.textBlack}
@@ -346,6 +348,7 @@ const Summary = ({ branchesData = [], leftBranchesData = [], goldenBranchData = 
               y="105"
               textAnchor="middle"
               fontSize="15"
+              fontFamily={colors.fontFamily}
             >
               {centerLabel1}
             </text>
@@ -354,6 +357,7 @@ const Summary = ({ branchesData = [], leftBranchesData = [], goldenBranchData = 
               y="127"
               textAnchor="middle"
               fontSize="15"
+              fontFamily={colors.fontFamily}
             >
               {centerLabel2}
             </text>
@@ -363,6 +367,7 @@ const Summary = ({ branchesData = [], leftBranchesData = [], goldenBranchData = 
               textAnchor="middle"
               fontSize="26"
               fontWeight="bold"
+              fontFamily={colors.fontFamily}
             >
               {totalViolators}
             </text>
@@ -423,6 +428,7 @@ const Summary = ({ branchesData = [], leftBranchesData = [], goldenBranchData = 
               dominantBaseline="middle"
               fontWeight="bold"
               fontSize="20"
+              fontFamily={colors.fontFamily}
             >
               {leftBranchValue}
             </text>
@@ -464,6 +470,7 @@ const Summary = ({ branchesData = [], leftBranchesData = [], goldenBranchData = 
               dominantBaseline="middle"
               fontWeight="bold"
               fontSize="20"
+              fontFamily={colors.fontFamily}
             >
               {rightBranchValue}
             </text>

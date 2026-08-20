@@ -52,10 +52,10 @@ const ViolatorSummary = ({
     return (
       <g>
         <path d={d} fill={color} stroke={colors.border} />
-        <text x={centerX} y={bottomY - 15} textAnchor="middle" fontWeight="bold" fontSize="20">
+        <text x={centerX} y={bottomY - 15} textAnchor="middle" fontWeight="bold" fontSize="20" fontFamily={colors.fontFamily}>
           {number}
         </text>
-        <text x={centerX} y={bottomY + 22} textAnchor="middle" fontSize="18">
+        <text x={centerX} y={bottomY + 22} textAnchor="middle" fontSize="18" fontFamily={colors.fontFamily}>
           {label}
         </text>
       </g>
@@ -112,13 +112,13 @@ const ViolatorSummary = ({
               strokeLinecap="round"
             />
             {/* Center Text */}
-            <text x={centerX - 45} y={centerY - 65} textAnchor="middle" fontSize="18" fill="red" fontWeight="bold">
+            <text x={centerX - 45} y={centerY - 65} textAnchor="middle" fontSize="18" fill="red" fontWeight="bold" fontFamily={colors.fontFamily}>
               {centerLabel1}
             </text>
-            <text x={centerX - 46} y={centerY - 40} textAnchor="middle" fontSize="18" fill="red" fontWeight="bold">
+            <text x={centerX - 46} y={centerY - 40} textAnchor="middle" fontSize="18" fill="red" fontWeight="bold" fontFamily={colors.fontFamily}>
               {centerLabel2}
             </text>
-            <text x={centerX} y={centerY + 25} textAnchor="middle" fontSize="32" fill="red" fontWeight="bold">
+            <text x={centerX} y={centerY + 25} textAnchor="middle" fontSize="32" fill="red" fontWeight="bold" fontFamily={colors.fontFamily}>
               {total}
             </text>
       

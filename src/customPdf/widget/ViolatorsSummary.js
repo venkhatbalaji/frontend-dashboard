@@ -74,13 +74,14 @@ export default function ViolatorsSummary({
     return (
       <g>
         <path d={d} fill={color} stroke={colors.chipBorder} strokeWidth={0.5} />
-        <text 
-          x={centerX} 
-          y={2 + cardTopY + height / 2} 
-          textAnchor="middle" 
+        <text
+          x={centerX}
+          y={2 + cardTopY + height / 2}
+          textAnchor="middle"
           dominantBaseline="middle"
-          fontWeight="bold" 
+          fontWeight="bold"
           fontSize="14"
+          fontFamily={colors.fontFamily}
           fill={colors.text}
         >
           {number}

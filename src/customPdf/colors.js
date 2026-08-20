@@ -124,7 +124,7 @@ export const colors = {
   goldShineGlow: 'rgba(240, 192, 90, 0.55)',
 
   // Typography - common font settings
-  fontFamily: 'sf-pro-text',
+  fontFamily: "'sf-pro-text', 'Noto Kufi Arabic Variable', sans-serif",
   fontSizeXxs: '8px',
   fontSizeXs: '9px',
   fontSizeSvgIcon: '10',

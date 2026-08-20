@@ -80,6 +80,7 @@ const TotalMovements = ({
               y="115"
               textAnchor="middle"
               fontSize={"16px"}
+              fontFamily={colors.fontFamily}
               fill={colors.textBlack}
             >
               {centerLabel1}
@@ -89,6 +90,7 @@ const TotalMovements = ({
               y="135"
               textAnchor="middle"
               fontSize={"16px"}
+              fontFamily={colors.fontFamily}
             >
               {centerLabel2}
             </text>
