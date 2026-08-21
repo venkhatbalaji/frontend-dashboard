@@ -132,6 +132,7 @@ export default function ResidentBreakdownTree({ data, status, language = "en" })
             justifyContent: "center",
             alignItems: "center",
             height: "100%",
+            fontFamily: colors.fontFamily,
             ...textFlipStyle,
           }}
         >
@@ -191,6 +192,7 @@ export default function ResidentBreakdownTree({ data, status, language = "en" })
               justifyContent: "center",
               alignItems: "center",
               height: "100%",
+              fontFamily: colors.fontFamily,
               ...textFlipStyle,
             }}
           >
@@ -211,6 +213,7 @@ export default function ResidentBreakdownTree({ data, status, language = "en" })
               display: "flex",
               alignItems: "center",
               height: "100%",
+              fontFamily: colors.fontFamily,
               ...textFlipStyle,
             }}
           >
@@ -279,6 +282,7 @@ export default function ResidentBreakdownTree({ data, status, language = "en" })
               justifyContent: "center",
               alignItems: "center",
               height: "100%",
+              fontFamily: colors.fontFamily,
               ...textFlipStyle,
             }}
           >
@@ -295,6 +299,7 @@ export default function ResidentBreakdownTree({ data, status, language = "en" })
               justifyContent: "center",
               alignItems: "flex-start",
               height: "100%",
+              fontFamily: colors.fontFamily,
               ...textFlipStyle,
             }}
           >

@@ -111,6 +111,7 @@ export default function TreeFlow({
               justifyContent: "center",
               alignItems: "center",
               height: "100%",
+              fontFamily: colors.fontFamily,
               ...textFlipStyle,
             }}
           >
@@ -150,6 +151,7 @@ export default function TreeFlow({
               justifyContent: "center",
               alignItems: "center",
               height: "100%",
+              fontFamily: colors.fontFamily,
               ...textFlipStyle,
             }}
           >
@@ -187,6 +189,7 @@ export default function TreeFlow({
                 justifyContent: "center",
                 alignItems: "center",
                 height: "100%",
+                fontFamily: colors.fontFamily,
                 ...textFlipStyle,
               }}
             >
@@ -212,6 +215,7 @@ export default function TreeFlow({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              fontFamily: colors.fontFamily,
               ...textFlipStyle,
             }}
           >
@@ -331,6 +335,7 @@ export default function TreeFlow({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              fontFamily: colors.fontFamily,
               ...textFlipStyle,
             }}
           >
@@ -375,6 +380,7 @@ export default function TreeFlow({
               alignItems: "center",
               height: "100%",
               textAlign: "center",
+              fontFamily: colors.fontFamily,
               ...textFlipStyle,
             }}
           >
@@ -430,6 +436,7 @@ export default function TreeFlow({
                 alignItems: "center",
                 height: "100%",
                 gap: "2px",
+                fontFamily: colors.fontFamily,
                 ...textFlipStyle,
               }}
             >
@@ -456,6 +463,7 @@ export default function TreeFlow({
                 justifyContent: "flex-start",
                 height: "100%",
                 paddingLeft: "2px",
+                fontFamily: colors.fontFamily,
                 ...textFlipStyle,
               }}
             >
@@ -495,6 +503,7 @@ export default function TreeFlow({
               alignItems: "center",
               justifyContent: "flex-start",
               height: "100%",
+              fontFamily: colors.fontFamily,
               ...textFlipStyle,
             }}
           >
@@ -547,6 +556,7 @@ export default function TreeFlow({
             fontSize: colors.fontSizeXxs,
             color: colors.textDescription,
             lineHeight: "1.3",
+            fontFamily: colors.fontFamily,
             ...textFlipStyle,
           }}
         >

@@ -137,7 +137,8 @@ const Branches = ({
                   maxWidth: "106px",
                   margin: "0",
                   wordWrap: "break-word",
-                  lineHeight: "1.2"
+                  lineHeight: "1.2",
+                  fontFamily: colors.fontFamily
                 }}
               >
                 {boxLabel}
@@ -193,8 +194,6 @@ const GoldenBranch = ({ boxText, boxLabel }) => {
         y={boxY}
         width={boxWidth}
         height={boxHeight}
-        rx={6}
-        ry={6}
         fill="url(#goldenBranchFill)"
         stroke={colors.goldShineDeep}
         strokeWidth="1"
@@ -202,7 +201,6 @@ const GoldenBranch = ({ boxText, boxLabel }) => {
       <text
         x={boxCX}
         y={boxCY}
-        fontWeight="bold"
         fontSize="15"
         fontFamily={colors.fontFamily}
         textAnchor="middle"
@@ -216,11 +214,11 @@ const GoldenBranch = ({ boxText, boxLabel }) => {
           xmlns="http://www.w3.org/1999/xhtml"
           style={{
             fontSize: "13px",
-            fontWeight: 600,
             color: colors.goldShineDeep,
             textAlign: "center",
             wordWrap: "break-word",
-            lineHeight: "1.2"
+            lineHeight: "1.2",
+            fontFamily: colors.fontFamily
           }}
         >
           {boxLabel}
@@ -442,7 +440,8 @@ const Summary = ({ branchesData = [], leftBranchesData = [], goldenBranchData = 
                   maxWidth: "120px",
                   margin: "0 auto",
                   wordWrap: "break-word",
-                  lineHeight: "1.2"
+                  lineHeight: "1.2",
+                  fontFamily: colors.fontFamily
                 }}
               >
                 {leftBranchLabel}
@@ -484,7 +483,8 @@ const Summary = ({ branchesData = [], leftBranchesData = [], goldenBranchData = 
                   maxWidth: "90px",
                   margin: "0 auto",
                   wordWrap: "break-word",
-                  lineHeight: "1.2"
+                  lineHeight: "1.2",
+                  fontFamily: colors.fontFamily
                 }}
               >
                 {rightBranchLabel}

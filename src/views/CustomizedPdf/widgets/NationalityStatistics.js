@@ -872,6 +872,7 @@ export default function NationalityStatistics({ emiratesConfigValue }) {
                     dominantBaseline="middle"
                     fontSize={colors.fontSizeMedium}
                     fontWeight="bold"
+                    fontFamily={colors.fontFamily}
                     fill={colors.nationalityBadgeText}
                   >
                     {statsTodayData.days_count}{" "}

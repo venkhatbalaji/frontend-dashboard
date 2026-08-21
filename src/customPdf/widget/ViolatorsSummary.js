@@ -29,7 +29,7 @@ export default function ViolatorsSummary({
  
   // Layout constants for chart + connectors + cards
   const CHART_W = 330; // increased width to accommodate cards
-  const CHART_H = 240; // increased height to accommodate cards
+  const CHART_H = 250; // increased height to accommodate cards and their wrapped labels
   const CONTAINER_H = 170; // increased height to accommodate cards
   // Visual ring settings
   const strokeWidth = 10;
@@ -90,22 +90,23 @@ export default function ViolatorsSummary({
           x={centerX - 60}
           y={bottomY + 12}
           width="110"
-          height="40"
+          height="42"
         >
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             style={{
-              fontSize: "13px",
+              fontSize: "11px",
               color: colors.text,
               textAlign: "center",
               maxWidth: "90px",
               width: "90px",
               wordWrap: "break-word",
-              lineHeight: "1.2"
+              lineHeight: "1.2",
+              fontFamily: colors.fontFamily
             }}
           >
             <div>{label1}</div>
-            <div style={{ marginTop: "3px" }}>{label2}</div>
+            {label2 && <div style={{ marginTop: "3px" }}>{label2}</div>}
           </div>
         </foreignObject>
       </g>
