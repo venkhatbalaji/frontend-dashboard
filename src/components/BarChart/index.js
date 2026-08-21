@@ -45,7 +45,15 @@ function BarChart ({ xAxis: _xAxis, yAxis: _yAxis, chart: _chart, ...props }) {
     },
   }
 
+  // `type` (default 'basicBar') is used by the underlying library to derive
+  // its own `chart: { type: "bar" }` internally, but that derived value gets
+  // shallow-merged *underneath* whatever `chart` object we pass here — so
+  // passing a `chart` object without `type` (as we always do, to apply
+  // fontFamily) blanks it out and Highcharts falls back to its own default
+  // chart type, "line". Set `type: "bar"` explicitly so every chart stays a
+  // bar chart unless a caller opts into something else via `chart.type`.
   const chart = {
+    type: 'bar',
     style: { fontFamily: colors.fontFamily },
     ..._chart,
   }
