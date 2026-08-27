@@ -78,6 +78,27 @@ function firstWords(name, n = 1) {
   return toks.slice(0, n).join(" ");
 }
 
+// Group-centering (below) can shift a small group toward its parent's midpoint
+// while a neighboring group doesn't move at all, which can pull two adjacent
+// cards closer together than the row's normal spacing — even to the point of
+// overlapping when group sizes are uneven (e.g. 2/1/2 children across three
+// marriages). This sweep restores a minimum gap between every adjacent pair
+// left-to-right, then re-centers the whole row on its pre-sweep centroid so
+// the "centered under parents" intent introduced by the caller is preserved
+// as closely as possible.
+function enforceMinSpacing(items, minGap) {
+  if (items.length < 2) return;
+  items.sort((a, b) => a.x - b.x);
+  const before = items.reduce((sum, it) => sum + it.x, 0) / items.length;
+  for (let i = 1; i < items.length; i++) {
+    const minX = items[i - 1].x + minGap;
+    if (items[i].x < minX) items[i].x = minX;
+  }
+  const after = items.reduce((sum, it) => sum + it.x, 0) / items.length;
+  const drift = after - before;
+  items.forEach((it) => { it.x -= drift; });
+}
+
 function boundsFromCoords(coords, ids) {
   const xs = [];
   const ys = [];
@@ -205,9 +226,9 @@ function layoutFiveTier(data, adj, root, GAP, Y, ID_INLAWS, ID_GPS_M, ID_GPS_F, 
       groupChildren.forEach((cid) => tmpX.set(cid, tmpX.get(cid) + cappedShift));
     });
 
-    allChildSlots.forEach((s) => {
-      coords.set(s.id, { x: tmpX.get(s.id), y: Y.C });
-    });
+    const childSpacing = allChildSlots.map((s) => ({ id: s.id, x: tmpX.get(s.id) }));
+    enforceMinSpacing(childSpacing, GAP);
+    childSpacing.forEach((it) => coords.set(it.id, { x: it.x, y: Y.C }));
   }
 
   // ── Row -2: grandchildren cluster or expanded grid ───────────────────────
@@ -249,7 +270,9 @@ function layoutFiveTier(data, adj, root, GAP, Y, ID_INLAWS, ID_GPS_M, ID_GPS_F, 
       arr.forEach((gid) => tmpX.set(gid, tmpX.get(gid) + cappedShift));
     });
 
-    flat.forEach((s) => coords.set(s.id, { x: tmpX.get(s.id), y: Y.GC }));
+    const gcSpacing = flat.map((s) => ({ id: s.id, x: tmpX.get(s.id) }));
+    enforceMinSpacing(gcSpacing, GAP);
+    gcSpacing.forEach((it) => coords.set(it.id, { x: it.x, y: Y.GC }));
   } else if (grandkidsVisible.length > 0) {
     coords.set(ID_GCK, { x: rootX, y: Y.GC });
   }
@@ -352,7 +375,7 @@ function waitForSize(el, timeout = 5000) {
 
 // ─── Main component ──────────────────────────────────────────────────────────
 
-export default function FamilyGraph({ treeData, personId, onPersonSelect, onNodeClick }) {
+export default function FamilyGraph({ treeData, personId, onPersonSelect, onNodeClick, isRtl }) {
   const intl = useIntl();
   const containerRef = useRef(null);
   const cancelledRef = useRef(false); // toggled in cleanup so the async init can bail mid-flight
@@ -377,7 +400,15 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
   const ID_GCK = "__cluster_grandchildren__";
   const UNIT = 140;
   const GAP = 4.2;
-  const CARD_WIDTH = 150;
+  const CARD_WIDTH = 160;
+  // Largest world-units-per-pixel ratio (i.e. most zoomed out) at which
+  // same-row cards, spaced GAP*UNIT apart in world space, still keep a
+  // small gap on screen. Used to keep the camera from ever zooming out far
+  // enough to visually overlap fixed-width cards. Margin is intentionally
+  // small (not a comfortable "breathing room" value) — it only exists to
+  // guarantee literal non-overlap; anything larger clips well-behaved,
+  // moderately-wide trees that were never at risk of overlapping.
+  const NO_OVERLAP_MAX_RATIO = (GAP * UNIT) / (CARD_WIDTH + 8);
 
   // Pre-translate cluster labels and toolbar buttons (reactive to locale)
   const LBL = {
@@ -391,6 +422,11 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
     btnExit:       intl.formatMessage({ id: "family_tree_btn_exit" }),
     btnZoomIn:     intl.formatMessage({ id: "family_tree_btn_zoom_in" }),
     btnZoomOut:    intl.formatMessage({ id: "family_tree_btn_zoom_out" }),
+    rowGrandparents:  intl.formatMessage({ id: "family_tree_row_grandparents" }),
+    rowParents:       intl.formatMessage({ id: "family_tree_row_parents" }),
+    rowFamily:        intl.formatMessage({ id: "family_tree_row_family" }),
+    rowChildren:      intl.formatMessage({ id: "family_tree_row_children" }),
+    rowGrandchildren: intl.formatMessage({ id: "family_tree_row_grandchildren" }),
   };
 
   useLayoutEffect(() => {
@@ -434,12 +470,18 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
         // Use the design-system CSS custom property for the container bg so
         // the toolbar matches the rest of the page in dark mode. Falls back
         // to white when the variable is absent (legacy themes).
+        // direction is set explicitly here (not inherited) because the graph
+        // panel's own container is forced LTR for the camera/coordinate math
+        // (see index.js) — that forced LTR would otherwise leak into this
+        // toolbar too and make margin-inline-start:auto push the button
+        // group to the physical right even in an Arabic/RTL session.
         toolbar.style.cssText = `
           flex: 0 0 52px; padding: 10px 14px;
           border-bottom: 1px solid var(--colorBorderSecondary, #eee);
           display: flex; gap: 12px; align-items: center;
           background: var(--colorBgContainer, #fff);
           color: var(--colorText, #111);
+          direction: ${isRtl ? "rtl" : "ltr"};
         `;
         // !important on color/background defends against dark-mode global CSS
         // (e.g. `button { color: var(--colorText) }`) that otherwise wins on
@@ -470,7 +512,7 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
 
         const fsControls = document.createElement("div");
         fsControls.id = "fs-controls";
-        fsControls.style.cssText = "position:absolute;top:10px;right:10px;display:none;gap:8px;z-index:1000;pointer-events:auto;";
+        fsControls.style.cssText = `position:absolute;top:10px;${isRtl ? "left" : "right"}:10px;display:none;gap:8px;z-index:1000;pointer-events:auto;direction:${isRtl ? "rtl" : "ltr"};`;
         const fsBtnStyle = "background-color:#DAA520 !important;color:#fff !important;border:none;border-radius:6px;padding:6px 10px;font-weight:500;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.15);";
         fsControls.innerHTML = `
           <button id="fs-zoom-out-btn" title="${LBL.btnZoomOut}" aria-label="${LBL.btnZoomOut}" style="${fsBtnStyle};font-weight:600;min-width:32px;line-height:1;">−</button>
@@ -504,7 +546,7 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
           resident_f: "/resident/female.png",
         };
         const imgTag = (src) =>
-          `<img src="${src}" alt="" draggable="false" style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;border-radius:8px;" />`;
+          `<img src="${src}" alt="" draggable="false" style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;" />`;
         const SVG_PEOPLE = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%"><circle cx="9" cy="9" r="3"/><circle cx="17" cy="10.5" r="2.4"/><path d="M3 19c0-2.8 2.7-5 6-5s6 2.2 6 5"/><path d="M14 18.4c.4-1.7 2.1-3 4-3s3.6 1.3 4 3"/></svg>`;
         const tint = (hex, alpha) => {
           const m = /^#([0-9a-fA-F]{6})$/.exec(hex || "");
@@ -581,6 +623,13 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
         overlay.appendChild(nodeLayer);
         graphContainer.appendChild(overlay);
 
+        // Faint generation labels along the left edge (Grandparents / Parents /
+        // Family / Children / Grandchildren) — orientation aid on dense trees,
+        // shown only for tiers that currently have a visible card.
+        const rowLabelLayer = document.createElement("div");
+        rowLabelLayer.style.cssText = "position: absolute; inset: 0; pointer-events: none; z-index: 5; overflow: hidden;";
+        graphContainer.appendChild(rowLabelLayer);
+
         // ── Independent camera ────────────────────────────────────────────
         // We stopped relying on Sigma's camera + mouseCaptor: between Sigma
         // version quirks, our overlay layer, and the dark-mode CSS, drag was
@@ -606,7 +655,7 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
 
         const drawEdges = () => {
           svg.innerHTML = "";
-          const EDGE_R = 10;
+          const EDGE_R = 12;
           // Every relationship is drawn regardless of where its endpoints sit;
           // SVG overflow:hidden on the parent crops whatever leaks past the
           // panel edge. Earlier we culled edges with off-viewport endpoints
@@ -645,13 +694,13 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
 
             if (e.type === "SPOUSE_OF") {
               const wifeColor = wifeColorOf.get(e.source) || wifeColorOf.get(e.target);
-              p.setAttribute("stroke", wifeColor || "#bf7f00");
-              p.setAttribute("stroke-width", "2.5");
+              p.setAttribute("stroke", wifeColor || "#DAA520");
+              p.setAttribute("stroke-width", "3");
               if (e.relationship_status === "inactive") { p.setAttribute("stroke-dasharray", "6,4"); p.setAttribute("opacity", "0.5"); }
             } else if (e.type === "CHILD_OF") {
               const isMother = e.parent_sex === "F" || e.parent_sex === "f";
               const branchColor = branchColorOf.get(e.source);
-              const fallback = isMother ? "#bf7f00" : "#aeb4bd";
+              const fallback = isMother ? "#DAA520" : "#aeb4bd";
               p.setAttribute("stroke", branchColor || fallback);
               p.setAttribute("stroke-width", isMother ? "2.5" : "2");
             } else if (e.type === "SIBLING_OF") {
@@ -691,10 +740,13 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
               // backgrounds and #6b7280 metas were previously hardcoded and
               // stayed bright in dark mode.
               el.innerHTML = `
-                <div class="ft-avatar" style="width:40px;height:40px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:7px;box-sizing:border-box;background:var(--colorFillTertiary, #f3f4f6);color:var(--colorTextSecondary, #6b7280);"></div>
-                <div class="ft-info" style="line-height:1.2;overflow:hidden;flex:1;min-width:0;">
-                  <div class="ft-meta" style="font-size:11px;color:var(--colorTextSecondary, #6b7280);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
-                  <div class="ft-name" style="font-weight:600;font-size:13px;color:var(--colorText, #111827);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+                <div class="ft-avatar-wrap" style="position:relative;flex-shrink:0;">
+                  <div class="ft-avatar" style="width:46px;height:46px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:8px;box-sizing:border-box;background:var(--colorFillTertiary, #f3f4f6);color:var(--colorTextSecondary, #6b7280);"></div>
+                  <div class="ft-status-dot" style="position:absolute;bottom:-1px;right:-1px;width:12px;height:12px;border-radius:50%;border:2px solid var(--colorBgContainer, #fff);box-sizing:border-box;"></div>
+                </div>
+                <div class="ft-info" style="line-height:1.3;overflow:hidden;flex:1;min-width:0;">
+                  <div class="ft-name" style="font-weight:700;font-size:13.5px;color:var(--colorText, #111827);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+                  <div class="ft-meta" style="font-size:10.5px;font-weight:600;letter-spacing:0.03em;text-transform:uppercase;color:var(--colorTextSecondary, #6b7280);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
                 </div>
               `;
               nodeLayer.appendChild(el);
@@ -729,9 +781,9 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
             el.style.cssText = `
               position:absolute; left:${P.x}px; top:${P.y}px; transform:translate(-50%,-50%);
               pointer-events:auto; background:${cardBg};
-              border:${cardBorder}; border-radius:14px;
+              border:${cardBorder}; border-radius:16px;
               box-shadow:${boxShadow};
-              display:flex; align-items:center; gap:11px; padding:9px 11px 9px ${branchColor ? 15 : 11}px; width:${CARD_WIDTH}px; box-sizing:border-box; cursor:pointer;
+              display:flex; align-items:center; gap:11px; padding:10px 12px 10px ${branchColor ? 16 : 12}px; width:${CARD_WIDTH}px; box-sizing:border-box; cursor:pointer;
               transition:transform 0.15s ease, box-shadow 0.15s ease;
             `;
 
@@ -820,6 +872,21 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
             if (avatarEl) {
               avatarEl.style.background = palette.bg;
               avatarEl.style.color = palette.fg;
+              // Real photos read best edge-to-edge; the cluster glyph needs
+              // breathing room so it doesn't touch the circular clip.
+              avatarEl.style.padding = isCluster ? "9px" : "0px";
+            }
+            // Small citizen (gold) / resident (green) status dot on the avatar —
+            // mirrors the badge colors used in the details panel so the two
+            // views read as one system at a glance.
+            const statusDot = el.querySelector(".ft-status-dot");
+            if (statusDot) {
+              if (isCluster) {
+                statusDot.style.display = "none";
+              } else {
+                statusDot.style.display = "block";
+                statusDot.style.background = isCitizen ? "#DAA520" : "var(--colorSuccessText, #15803d)";
+              }
             }
 
             const displayName = isCluster
@@ -836,7 +903,39 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
           existing.forEach((el, id) => { if (!used.has(id)) el.remove(); });
         };
 
-        const draw = () => { drawEdges(); drawCards(); };
+        const ROW_DEFS = [
+          { y: Y_TIERS.GP, label: LBL.rowGrandparents },
+          { y: Y_TIERS.P, label: LBL.rowParents },
+          { y: Y_TIERS.MID, label: LBL.rowFamily },
+          { y: Y_TIERS.C, label: LBL.rowChildren },
+          { y: Y_TIERS.GC, label: LBL.rowGrandchildren },
+        ];
+        const drawRowLabels = () => {
+          rowLabelLayer.innerHTML = "";
+          const ch = graphContainer.clientHeight || 600;
+          const EPS = 0.01;
+          const explicitIds = Array.from(layout.explicitIds);
+          ROW_DEFS.forEach((row) => {
+            const hasNode = explicitIds.some((id) => {
+              const c = layout.coords.get(id);
+              return c && Math.abs(c.y - row.y) < EPS;
+            });
+            if (!hasNode) return;
+            const wy = row.y * UNIT;
+            const sy = (wy - myCamera.y) * myCamera.scale + ch / 2;
+            if (sy < -20 || sy > ch + 20) return;
+            const el = document.createElement("div");
+            el.textContent = row.label;
+            el.style.cssText = `
+              position:absolute; ${isRtl ? "right" : "left"}:14px; top:${sy}px; transform:translateY(-50%);
+              font-size:11px; font-weight:700; letter-spacing:${isRtl ? "0" : "0.06em"}; text-transform:uppercase;
+              color:var(--colorTextTertiary, #9ca3af); opacity:0.7; white-space:nowrap;
+            `;
+            rowLabelLayer.appendChild(el);
+          });
+        };
+
+        const draw = () => { drawEdges(); drawCards(); drawRowLabels(); };
 
         // ── Camera helpers ────────────────────────────────────────────────
         // The "fit" ratio is the most-zoomed-out we ever want to be. Anything
@@ -855,7 +954,14 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
           const dx = Math.max(1e-6, (b.maxX - b.minX) * UNIT) + padPx * 2;
           const dy = Math.max(1e-6, (b.maxY - b.minY) * UNIT) + 120;
           const margin = 0.18;
-          const ratio = Math.max(dx / (cw * (1 - margin)), dy / (ch * (1 - margin)), 0.0001);
+          let ratio = Math.max(dx / (cw * (1 - margin)), dy / (ch * (1 - margin)), 0.0001);
+          // Cards are fixed-pixel-width regardless of zoom, so zooming out far
+          // enough can shrink the on-screen gap between same-row siblings below
+          // CARD_WIDTH — the cards start visually overlapping even though their
+          // world-space grid slots never crossed. Clamp ratio so it can never
+          // zoom out past the point where adjacent grid slots (spaced GAP*UNIT
+          // apart in world space) render closer than a card-width + margin.
+          ratio = Math.min(ratio, NO_OVERLAP_MAX_RATIO);
           return { ratio, cx: b.cx * UNIT, cy: b.cy * UNIT };
         };
 
@@ -873,7 +979,10 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
         let fitScale = 1;
         const SCALE_MIN_FACTOR = 0.5;
         const SCALE_MAX_FACTOR = 2.5;
-        const scaleMin = () => fitScale * SCALE_MIN_FACTOR;
+        // Hard floor derived the same way as NO_OVERLAP_MAX_RATIO above: never
+        // let manual zoom-out (the − button / wheel) shrink same-row spacing
+        // below a card-width + margin either.
+        const scaleMin = () => Math.max(fitScale * SCALE_MIN_FACTOR, 1 / NO_OVERLAP_MAX_RATIO);
         const scaleMax = () => fitScale * SCALE_MAX_FACTOR;
 
         // contentBounds: world-space bbox of all currently-laid-out nodes.

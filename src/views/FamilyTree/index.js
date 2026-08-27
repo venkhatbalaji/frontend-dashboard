@@ -65,7 +65,9 @@ function SearchScreen({ onSearch, loading, error }) {
     const trimmed = value.trim();
     if (!trimmed) { setValidationError(intl.formatMessage({ id: "familytree_search_empty" })); return; }
     if (!selectedType.validate(trimmed)) { setValidationError(intl.formatMessage({ id: "family_tree_invalid_input" })); return; }
-    const payLoad = searchType == "EID"? trimmed.replace(/-/g, "") : trimmed;
+    const payLoad = searchType === "EID" ? trimmed.replace(/-/g, "")
+      : searchType === "UNIFIED_ID" ? `P${trimmed}`
+      : trimmed;
     setValidationError("");
     onSearch({ searchType, value: payLoad });
   };
@@ -238,6 +240,7 @@ function SearchScreen({ onSearch, loading, error }) {
 function GraphView({ treeData, selectedNode, currentPersonId, onPersonSelect, onNodeClick, onBack, isRtl }) {
   const intl = useIntl();
   const themeVariables = useToken();
+  const [isDetailsOpen, setIsDetailsOpen] = useState(true);
 
   const isArabicLocale = String(intl.locale || "").toLowerCase().startsWith("ar");
   const personRecord = currentPersonId && treeData?.nodes
@@ -286,21 +289,52 @@ function GraphView({ treeData, selectedNode, currentPersonId, onPersonSelect, on
 
       {/* Content split */}
       <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-        {/* Details panel – 30% */}
+        {/* Details panel – collapsible, 30% when open. The collapse/expand
+            toggle lives inside its header (FamilyDetails), not as a separate
+            strip here — when closed, a small floating button on the graph
+            side re-opens it. Stays mounted (rather than conditionally
+            rendered) so the width/opacity change can transition smoothly
+            instead of popping in/out instantly. */}
         <div style={{
-          width: "30%", flexShrink: 0, overflowY: "auto",
-          [isRtl ? "borderLeft" : "borderRight"]: `1px solid ${themeVariables?.token?.colorBorder || "#e5e7eb"}`,
+          flex: isDetailsOpen ? "0 0 30%" : "0 0 0%",
+          minWidth: 0, overflowY: isDetailsOpen ? "auto" : "hidden", overflowX: "hidden",
+          opacity: isDetailsOpen ? 1 : 0,
+          [isRtl ? "borderLeft" : "borderRight"]: `1px solid ${isDetailsOpen ? (themeVariables?.token?.colorBorder || "#e5e7eb") : "transparent"}`,
           backgroundColor: "#f9fafb",
+          transition: "flex-basis 0.28s ease, opacity 0.2s ease, border-color 0.28s ease",
         }}>
           <FamilyDetails
             treeData={treeData}
             selectedNode={selectedNode}
             personId={currentPersonId}
             isRtl={isRtl}
+            onToggleCollapse={() => setIsDetailsOpen(false)}
           />
         </div>
-        {/* Graph – 70% */}
-        <div style={{ width: "70%", flexShrink: 0, position: "relative", backgroundColor: "#fff", direction: "ltr", overflow: "hidden" }}>
+
+        {/* Graph – fills whatever space remains */}
+        <div style={{ flex: "1 1 auto", position: "relative", backgroundColor: "#fff", direction: "ltr", overflow: "hidden" }}>
+          {!isDetailsOpen && (
+            <button
+              onClick={() => setIsDetailsOpen(true)}
+              title={intl.formatMessage({ id: "family_tree_expand_panel" })}
+              aria-label={intl.formatMessage({ id: "family_tree_expand_panel" })}
+              style={{
+                position: "absolute", top: "10px", [isRtl ? "right" : "left"]: "14px", zIndex: 30,
+                width: "34px", height: "34px", borderRadius: "8px",
+                background: themeVariables?.token?.colorBgContainer || "#fff",
+                border: `1px solid ${themeVariables?.token?.colorBorder || "#d1d5db"}`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer", color: themeVariables?.token?.colorText || "#111",
+                boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="16" rx="3" />
+                <line x1={isRtl ? "15" : "9"} y1="4" x2={isRtl ? "15" : "9"} y2="20" />
+              </svg>
+            </button>
+          )}
           <FamilyGraph
             treeData={treeData}
             personId={currentPersonId}

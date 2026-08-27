@@ -75,8 +75,13 @@ export default function ResidentBreakdownTree({ data, status, language = "en" })
   // Sub-breakdown
   const lastRowBottom = (rowCount - 1) * (ROW_H + ROW_GAP) + ROW_H;
   const subRowCY = lastRowBottom + SUB_DROP + SUB_BOX_H / 2;
-  const sub1X = cellsLeft;
-  const sub2X = cellsLeft + SUB_BOX_W + SUB_GAP;
+  // Keep both child boxes equal in size and center the pair beneath the
+  // "Inside the country" box. This also moves the blue box to the left
+  // instead of aligning it with the parent's left edge.
+  const subGroupWidth = SUB_BOX_W * 2 + SUB_GAP;
+  const insideBoxCenterX = cellsLeft + BOX_W / 2;
+  const sub1X = insideBoxCenterX - subGroupWidth / 2;
+  const sub2X = sub1X + SUB_BOX_W + SUB_GAP;
 
   const SUB_LABEL_H = 12;
 

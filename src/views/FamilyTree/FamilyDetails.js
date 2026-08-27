@@ -265,7 +265,31 @@ function buildRelationships(treeData, personId) {
   return { parents, children, spouses, siblings };
 }
 
-export default function FamilyDetails({ treeData, selectedNode, personId, isRtl }) {
+function CollapseButton({ intl, onToggleCollapse }) {
+  if (!onToggleCollapse) return null;
+  return (
+    <button
+      onClick={onToggleCollapse}
+      title={intl.formatMessage({ id: "family_tree_collapse_panel" })}
+      aria-label={intl.formatMessage({ id: "family_tree_collapse_panel" })}
+      style={{
+        marginInlineStart: "auto", flexShrink: 0,
+        width: "30px", height: "30px", borderRadius: "8px",
+        background: "transparent", border: `1px solid ${C.border}`,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        cursor: "pointer", color: C.text600,
+      }}
+    >
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="16" rx="3" />
+        <line x1="9" y1="4" x2="9" y2="20" />
+        <rect x="4" y="5" width="4.5" height="14" rx="1" fill="currentColor" stroke="none" />
+      </svg>
+    </button>
+  );
+}
+
+export default function FamilyDetails({ treeData, selectedNode, personId, isRtl, onToggleCollapse }) {
   const intl = useIntl();
   const [expanded, setExpanded] = useState({ personal: true, parents: true, spouses: true, siblings: true, children: true });
 
@@ -279,7 +303,10 @@ export default function FamilyDetails({ treeData, selectedNode, personId, isRtl 
     return (
       <div style={{ ...styles.wrapper, direction: isRtl ? "rtl" : "ltr" }}>
         <div style={styles.header}>
-          <h3 style={styles.headerTitle}>{intl.formatMessage({ id: "family_tree_details_title" })}</h3>
+          <div style={{ display: "flex", alignItems: "center", marginBottom: "4px" }}>
+            <h3 style={styles.headerTitle}>{intl.formatMessage({ id: "family_tree_details_title" })}</h3>
+            <CollapseButton intl={intl} onToggleCollapse={onToggleCollapse} />
+          </div>
           <p style={styles.headerSub}>{intl.formatMessage({ id: "family_tree_loading" })}</p>
         </div>
       </div>
@@ -317,7 +344,10 @@ export default function FamilyDetails({ treeData, selectedNode, personId, isRtl 
   return (
     <div style={{ ...styles.wrapper, direction: isRtl ? "rtl" : "ltr" }}>
       <div style={styles.header}>
-        <h3 style={styles.headerTitle}>{intl.formatMessage({ id: "family_tree_details_title" })}</h3>
+        <div style={{ display: "flex", alignItems: "center", marginBottom: "4px" }}>
+          <h3 style={styles.headerTitle}>{intl.formatMessage({ id: "family_tree_details_title" })}</h3>
+          <CollapseButton intl={intl} onToggleCollapse={onToggleCollapse} />
+        </div>
         <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
           <p style={styles.headerSub}>{fullName}</p>
           {displayPerson.person_type && (

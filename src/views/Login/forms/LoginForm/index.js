@@ -46,12 +46,13 @@ function LoginForm() {
   useEffect(() => {
     if (value?.data) {
       const minutes = value?.data?.expires_in;
+      const details = value?.data?.access_token ? jwt(value?.data?.access_token) : undefined;
       StorageService.set('authorization', {
         ...value?.data,
+        tokenParsed: details,
         session_expires: moment().add(minutes, "minutes"),
       });
-      if (value?.data?.access_token) {
-        const details = jwt(value?.data?.access_token)
+      if (details) {
         StorageService.set('user_details', details);
       }
       router.push('/');
