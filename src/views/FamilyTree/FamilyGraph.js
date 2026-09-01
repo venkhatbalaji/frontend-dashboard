@@ -403,12 +403,18 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
   const CARD_WIDTH = 160;
   // Largest world-units-per-pixel ratio (i.e. most zoomed out) at which
   // same-row cards, spaced GAP*UNIT apart in world space, still keep a
-  // small gap on screen. Used to keep the camera from ever zooming out far
-  // enough to visually overlap fixed-width cards. Margin is intentionally
-  // small (not a comfortable "breathing room" value) — it only exists to
-  // guarantee literal non-overlap; anything larger clips well-behaved,
-  // moderately-wide trees that were never at risk of overlapping.
+  // small gap on screen at full card size. Beyond this ratio, fitting the
+  // whole tree would require zooming out further than fixed-width cards
+  // can tolerate without visually overlapping — so instead of clamping the
+  // zoom (which used to clip wide trees and force the user to pan/scroll
+  // to see the rest), computeFit() shrinks the cards themselves via
+  // `cardScale` so the entire tree still fits in one view.
   const NO_OVERLAP_MAX_RATIO = (GAP * UNIT) / (CARD_WIDTH + 8);
+  // Floor on how much a wide tree is allowed to shrink cards to fit. Beyond
+  // this, text stops being legible, so very large/wide trees (well past a
+  // typical 20-30 member family) may still need a little panning — a much
+  // rarer case than the everyday "many siblings/spouses" one this fixes.
+  const CARD_MIN_SCALE = 0.6;
 
   // Pre-translate cluster labels and toolbar buttons (reactive to locale)
   const LBL = {
@@ -779,7 +785,7 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
             // cards left behind in dark mode.
             const cardBg = "var(--colorBgContainer, #ffffff)";
             el.style.cssText = `
-              position:absolute; left:${P.x}px; top:${P.y}px; transform:translate(-50%,-50%);
+              position:absolute; left:${P.x}px; top:${P.y}px; transform:translate(-50%,-50%) scale(${cardScale});
               pointer-events:auto; background:${cardBg};
               border:${cardBorder}; border-radius:16px;
               box-shadow:${boxShadow};
@@ -954,15 +960,16 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
           const dx = Math.max(1e-6, (b.maxX - b.minX) * UNIT) + padPx * 2;
           const dy = Math.max(1e-6, (b.maxY - b.minY) * UNIT) + 120;
           const margin = 0.18;
-          let ratio = Math.max(dx / (cw * (1 - margin)), dy / (ch * (1 - margin)), 0.0001);
+          const ratio = Math.max(dx / (cw * (1 - margin)), dy / (ch * (1 - margin)), 0.0001);
           // Cards are fixed-pixel-width regardless of zoom, so zooming out far
           // enough can shrink the on-screen gap between same-row siblings below
-          // CARD_WIDTH — the cards start visually overlapping even though their
-          // world-space grid slots never crossed. Clamp ratio so it can never
-          // zoom out past the point where adjacent grid slots (spaced GAP*UNIT
-          // apart in world space) render closer than a card-width + margin.
-          ratio = Math.min(ratio, NO_OVERLAP_MAX_RATIO);
-          return { ratio, cx: b.cx * UNIT, cy: b.cy * UNIT };
+          // CARD_WIDTH — the cards would start visually overlapping even though
+          // their world-space grid slots never crossed. Rather than clamping
+          // `ratio` (which used to leave wide trees zoomed in too far to fit,
+          // clipped by overflow:hidden), shrink the cards proportionally so the
+          // full tree still fits at this ratio without overlapping.
+          const cardScale = Math.max(CARD_MIN_SCALE, Math.min(1, NO_OVERLAP_MAX_RATIO / ratio));
+          return { ratio, cx: b.cx * UNIT, cy: b.cy * UNIT, cardScale };
         };
 
         // scale = pixels per world unit. fitScale is computed by centerCamera
@@ -977,12 +984,17 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
         // width before the camera resists further. overflow:hidden still
         // hides anything that crosses the panel boundary.
         let fitScale = 1;
+        // Card shrink factor applied at the last fit (1 = full size). Wide
+        // trees that need to zoom out past NO_OVERLAP_MAX_RATIO to fit get a
+        // smaller value here instead of being clipped — see computeFit().
+        let cardScale = 1;
         const SCALE_MIN_FACTOR = 0.5;
         const SCALE_MAX_FACTOR = 2.5;
         // Hard floor derived the same way as NO_OVERLAP_MAX_RATIO above: never
         // let manual zoom-out (the − button / wheel) shrink same-row spacing
-        // below a card-width + margin either.
-        const scaleMin = () => Math.max(fitScale * SCALE_MIN_FACTOR, 1 / NO_OVERLAP_MAX_RATIO);
+        // below a card-width + margin, accounting for the current cardScale
+        // (smaller cards tolerate zooming out further before overlapping).
+        const scaleMin = () => Math.max(fitScale * SCALE_MIN_FACTOR, cardScale / NO_OVERLAP_MAX_RATIO);
         const scaleMax = () => fitScale * SCALE_MAX_FACTOR;
 
         // contentBounds: world-space bbox of all currently-laid-out nodes.
@@ -1035,6 +1047,7 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
           const f = computeFit();
           // f.ratio = world units per pixel; we store pixels per world unit instead.
           fitScale = 1 / f.ratio;
+          cardScale = f.cardScale;
           myCamera.scale = fitScale;
           myCamera.x = f.cx;
           myCamera.y = f.cy;
