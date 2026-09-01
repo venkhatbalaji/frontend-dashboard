@@ -107,7 +107,7 @@ function Main(props) {
     };
   }
 
-  if (!authorization?.tokenParsed) {
+  if (!authorization?.tokenParsed && router?.pathname !== "/404") {
     return (
       <Row isFullHeight={true}>
         <Col
@@ -130,7 +130,8 @@ function Main(props) {
   if (
     authorization?.tokenParsed &&
     !isAccessible &&
-    !router?.pathname?.includes("/access-denied")
+    !router?.pathname?.includes("/access-denied") &&
+    router?.pathname !== "/404"
   ) {
     const _menuOptions = getMenuOptions(intl, themeVariables, router);
     const menuOptions = _menuOptions?.filter((v) =>
@@ -144,7 +145,7 @@ function Main(props) {
     return null;
   }
 
-  const isAccessDenied = router?.pathname?.includes("/access-denied");
+  const isAccessDenied = router?.pathname?.includes("/access-denied") || router?.pathname === "/404";
 
   return (
     <Row style={{ maxWidth: "1920px" }} isFullHeight isFlex>

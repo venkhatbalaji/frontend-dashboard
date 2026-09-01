@@ -118,7 +118,9 @@ function Header({
   const locallyStoredLanguage = StorageService.get("locale") || "en";
   const locallyStoredTheme = StorageService.get("theme") || "base";
 
-  const userObj = StorageService.get("authorization")?.tokenParsed || {};
+  const authorization = StorageService.get("authorization");
+  const userObj = authorization?.tokenParsed || {};
+  const isAuthenticated = Boolean(authorization?.access_token) && (!userObj?.exp || userObj.exp * 1000 > Date.now());
 
   useEffect(() => {
     if (store?.projectTranslation !== projectTranslation) {
@@ -362,31 +364,37 @@ function Header({
                     </Col>
                   )
                 }
-                <Col flex="none">
-                  <Divider style={{ height: "32px" }} color="var(--colorSplit)" type="vertical" />
-                </Col>
-                <Col flex="none">
-                  <Dropdown
-                    menu={{
-                      items: profileOptions,
-                    }}
-                    overlayStyle={{
-                      minWidth: getUseResponsive({ default: "165px", tablet: "265px", mobile: "265px" })
-                    }}
-                  >
-                    <Row align="middle" gutter={themeVariables?.token?.marginXS}>
+                {
+                  isAuthenticated && (
+                    <>
                       <Col flex="none">
-                        <Avatar
-                          size={themeVariables?.token?.iconSize}
-                          icon={<UserOutlined />}
-                        />
+                        <Divider style={{ height: "32px" }} color="var(--colorSplit)" type="vertical" />
                       </Col>
                       <Col flex="none">
-                        <CaretDown color="var(--colorText)" size={16} />
+                        <Dropdown
+                          menu={{
+                            items: profileOptions,
+                          }}
+                          overlayStyle={{
+                            minWidth: getUseResponsive({ default: "165px", tablet: "265px", mobile: "265px" })
+                          }}
+                        >
+                          <Row align="middle" gutter={themeVariables?.token?.marginXS}>
+                            <Col flex="none">
+                              <Avatar
+                                size={themeVariables?.token?.iconSize}
+                                icon={<UserOutlined />}
+                              />
+                            </Col>
+                            <Col flex="none">
+                              <CaretDown color="var(--colorText)" size={16} />
+                            </Col>
+                          </Row>
+                        </Dropdown>
                       </Col>
-                    </Row>
-                  </Dropdown>
-                </Col>
+                    </>
+                  )
+                }
               </Row>
             </Col>
           }
