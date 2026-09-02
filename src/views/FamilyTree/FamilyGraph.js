@@ -120,7 +120,7 @@ function boundsFromCoords(coords, ids) {
 // under the (root + spouse) midpoint of their parents, and grandchildren are
 // re-centered under their respective parent.
 
-function layoutFiveTier(data, adj, root, GAP, Y, ID_INLAWS, ID_GPS_M, ID_GPS_F, ID_GCK, expandedClusters = new Set()) {
+function layoutFiveTier(data, adj, root, GAP, Y, ID_INLAWS, ID_GPS_M, ID_GPS_F, ID_GCK, expandedClusters = new Set(), isRtl = false) {
   const { parentsOf, childrenOf, spousesOf, siblingsOf: siblingsMap } = adj;
   const idMap = new Map(data.nodes.map((n) => [n.id, n]));
 
@@ -355,6 +355,15 @@ function layoutFiveTier(data, adj, root, GAP, Y, ID_INLAWS, ID_GPS_M, ID_GPS_F, 
     });
   }
 
+  // Mirror the whole tree horizontally for RTL locales — every position above
+  // is computed in a fixed LTR sense (siblings-left/root/spouses-right,
+  // children left-to-right by group), so flipping x here as a final step is
+  // the only change needed for the tree itself to read right-to-left; the
+  // relative ordering (group order, spacing, centering) is preserved, just mirrored.
+  if (isRtl) {
+    coords.forEach((c, id) => coords.set(id, { x: -c.x, y: c.y }));
+  }
+
   return { coords, explicitIds: explicit, edges };
 }
 
@@ -539,7 +548,7 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
 
         const graph = new Graph({ multi: false, allowSelfLoops: false });
         const adj = buildAdj(treeData);
-        const layout = layoutFiveTier(treeData, adj, currentRoot, GAP, Y_TIERS, ID_INLAWS, ID_GPS_M, ID_GPS_F, ID_GCK, expandedClusters);
+        const layout = layoutFiveTier(treeData, adj, currentRoot, GAP, Y_TIERS, ID_INLAWS, ID_GPS_M, ID_GPS_F, ID_GCK, expandedClusters, isRtl);
         const idMap = new Map(treeData.nodes.map((n) => [n.id, n]));
 
         // Per-person avatar: four buckets (citizen male, citizen female,
@@ -802,7 +811,7 @@ export default function FamilyGraph({ treeData, personId, onPersonSelect, onNode
                 if (newExpanded.has(id)) newExpanded.delete(id); else newExpanded.add(id);
                 setExpandedClusters(newExpanded);
                 const newAdj = buildAdj(treeData);
-                const newLayout = layoutFiveTier(treeData, newAdj, currentRoot, GAP, Y_TIERS, ID_INLAWS, ID_GPS_M, ID_GPS_F, ID_GCK, newExpanded);
+                const newLayout = layoutFiveTier(treeData, newAdj, currentRoot, GAP, Y_TIERS, ID_INLAWS, ID_GPS_M, ID_GPS_F, ID_GCK, newExpanded, isRtl);
                 const existingNodes = new Set(graph.nodes());
                 const newNodes = new Set(newLayout.explicitIds);
                 existingNodes.forEach((nid) => { if (!newNodes.has(nid)) graph.dropNode(nid); });
