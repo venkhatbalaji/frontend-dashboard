@@ -75,7 +75,7 @@ export default function UpdateMetrics({ totalUpdates, increasePercentage, langua
         },
         {
           key: "increase_pct",
-          label: tr("Increase percentage"),
+          label: tr(increasePercentage < 0 ? "Decrease percentage" : "Increase percentage"),
           formatFn: (val) => (val != null ? (val === 0 ? "0" : `${val.toFixed(2)}%`) : "-"),
           suffixElement: <DirectionArrow value={increasePercentage} />,
           borderColor: increasePercentage < 0 ? colors.nationalityProhibitionRed : colors.primary,
