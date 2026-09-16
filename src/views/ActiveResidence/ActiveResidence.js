@@ -28,6 +28,7 @@ import ViolatorsByEmiratesWrapper from "./widgets/ViolatorsByEmiratesWrapper";
 import ViolatorsByGender from "./widgets/ViolatorsByGender";
 import ViolatorsByType from "./widgets/ViolatorsByType";
 import RisksByType from "./widgets/RisksByType";
+import LazySection from "./LazySection";
 
 
 const { Funnel, CheckCircle, ArrowSquareOut, Info, IdentificationCard } = PhosphorIcons;
@@ -919,23 +920,33 @@ function ActiveResidence({ nationalitiesConfigValueObj, emiratesConfigValue, res
         {firstRowEle()}
       </Col>
       <Col>
-        {secondRowEle()}
+        <LazySection minHeight="480px">
+          {secondRowEle()}
+        </LazySection>
       </Col>
       <Col>
-        {fifthRowEle()}
+        <LazySection minHeight="650px">
+          {fifthRowEle()}
+        </LazySection>
       </Col>
       {
         filters?.residents_category !== "visa" && (
           <Col>
-            {sixthRowEle()}
+            <LazySection minHeight="480px">
+              {sixthRowEle()}
+            </LazySection>
           </Col>
         )
       }
       <Col>
-        {thirdRowEle()}
+        <LazySection minHeight="480px">
+          {thirdRowEle()}
+        </LazySection>
       </Col>
       <Col>
-        {fourthRowEle()}
+        <LazySection minHeight="480px">
+          {fourthRowEle()}
+        </LazySection>
       </Col>
     </>
   )

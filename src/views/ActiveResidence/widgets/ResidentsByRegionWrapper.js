@@ -538,6 +538,7 @@ function RisksByNationality({
           scroll={resolveTernary((isPreview || dataSource?.length <= 7), undefined, {
             y: patchedGetResponsive({ default: 330, tablet: 330, midTablet: 330, mobile: 330 }),
           })}
+          virtual={!isPreview && dataSource?.length > 7}
           pagination={false}
           dataSource={resolveTernary(isPreview, dataSource?.slice(printRows?.from, printRows?.to), dataSource)}
           footer={renderFooter}
