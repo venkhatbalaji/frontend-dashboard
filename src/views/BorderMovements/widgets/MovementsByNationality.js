@@ -488,7 +488,7 @@ function ResidentsByRegion({
                         y: ((data?.length > getResponsive({ default: 8, tablet: 4, midTablet: 6, mobile: 6 })) && !isPreview) ? getResponsive({ default: 370, tablet: 370, mobile: 370  }) : undefined,
                         x: getResponsive({ default: null, mobile: 500 })
                       }}
-                        
+                      virtual={!isPreview && data?.length > 7}
                       pagination={false}
                       dataSource={isPreview ? data?.slice(printRows?.from, printRows?.to) : data}
                     />

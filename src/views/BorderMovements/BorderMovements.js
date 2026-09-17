@@ -42,6 +42,7 @@ import _ from "lodash";
 import Segmented from "@/components/Segmented";
 import PageSectionsScrollWrap from "@/components/PageSectionsScrollWrap";
 import MovementsByNationality from "./widgets/MovementsByNationality"
+import LazySection from "@/components/LazySection";
 
 const { useToken } = theme;
 const { Funnel, CheckSquareOffset, CalendarBlank, CalendarCheck, Info, ArrowSquareOut } = PhosphorIcons;
@@ -1296,10 +1297,14 @@ function BorderMovements({
             })}
           >
             <Col span={isPreviewOpen ? 24 : getResponsive({ default: 12, tablet: 24 })}>
-              {movementByNationalityEle({ movementsByNationalityRef })}
+              <LazySection minHeight="480px">
+                {movementByNationalityEle({ movementsByNationalityRef })}
+              </LazySection>
             </Col>
             <Col span={isPreviewOpen ? 24 : getResponsive({ default: 12, tablet: 24 })}>
-              {residentsByAgeEle}
+              <LazySection minHeight="480px">
+                {residentsByAgeEle}
+              </LazySection>
             </Col>
           </Row>
         </Col>
