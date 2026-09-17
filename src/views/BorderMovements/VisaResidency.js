@@ -41,6 +41,7 @@ import VisaByRegionWrapper from "@/views/BorderMovements/widgets/VisaByRegionWra
 import VisaViolationByRegionWrapper from "@/views/BorderMovements/widgets/VisaViolationByRegionWrapper";
 import PageSectionsScrollWrap from "@/components/PageSectionsScrollWrap";
 import PrintModalWrap from "@/components/Print/PrintModalWrap";
+import LazySection from "@/components/LazySection";
 
 
 
@@ -1051,11 +1052,15 @@ function VisaResidency({
             ]}
           >
             <Col span={getResponsive({ default: 24 })}>
-              {visaRegionWrapperEle({})}
+              <LazySection minHeight="650px">
+                {visaRegionWrapperEle({})}
+              </LazySection>
             </Col>
 
             <Col span={getResponsive({ default: 24 })}>
-              {visaViolationByRegion({})}
+              <LazySection minHeight="650px">
+                {visaViolationByRegion({})}
+              </LazySection>
             </Col>
           </Row>
         </Col>

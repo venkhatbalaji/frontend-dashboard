@@ -1159,6 +1159,7 @@ function VisaByRegionAndNationality({
           y: data?.length > getResponsive({ default: 4, tablet: 4, midTablet: 6, mobile: 4 }) ? getResponsive({ default: 377, tablet: 344, mobile: 365 }) : undefined,
           x: getResponsive({ mobile: "690px" })
         })}
+        virtual={!isPreview && data?.length > 7}
         pagination={false}
         dataSource={resolveTernary(isPreview, data?.slice(printRows?.from, printRows?.to), data)}
       />

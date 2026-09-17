@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { Card } from "re-usable-design-components";
 
 // Defers mounting heavy below-the-fold widgets (Highcharts maps/charts, tables)
-// until they're about to scroll into view, instead of every row on this page
-// initializing at once. Scoped to ActiveResidence only.
+// until they're about to scroll into view, instead of every row on the page
+// initializing at once. Opt-in per page — only affects pages that use it.
 function LazySection({ children, minHeight }) {
   const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef(null);

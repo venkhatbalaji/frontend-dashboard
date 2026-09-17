@@ -28,7 +28,7 @@ import ViolatorsByEmiratesWrapper from "./widgets/ViolatorsByEmiratesWrapper";
 import ViolatorsByGender from "./widgets/ViolatorsByGender";
 import ViolatorsByType from "./widgets/ViolatorsByType";
 import RisksByType from "./widgets/RisksByType";
-import LazySection from "./LazySection";
+import LazySection from "@/components/LazySection";
 
 
 const { Funnel, CheckCircle, ArrowSquareOut, Info, IdentificationCard } = PhosphorIcons;
