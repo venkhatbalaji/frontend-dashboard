@@ -39,7 +39,7 @@ function PrintModalWrap({
       isContentPaddingNone
       styles={{
         body: {
-          height: '90dvh',
+          height: '90vh',
         }
       }}
       footer={[]}
