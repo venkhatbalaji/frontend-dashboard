@@ -48,7 +48,7 @@ function ViolatorsByGender({ isPreviewOpen, pageRef, filters, isRtl }) {
     value,
   } = useAsync({ asyncFunction: getViolatorsByGender });
 
-  const [showBy, setShowBy] = useState(isPreviewOpen ? pageRef.current?.violatorsByGender?.showBy : "overall");
+  const [showBy, setShowBy] = useState(isPreviewOpen ? (pageRef.current?.violatorsByGender?.showBy ?? "overall") : "overall");
 
   useEffect(() => {
     pageRef.current.violatorsByGender = {

@@ -127,7 +127,7 @@ function RisksByNationality({
 }) {
   const { geoJsonObj } = useWorldGeoJSON();
   const intl = useIntl();
-  const [showBy, setShowBy] = useState(isPreview ? pageRef.current?.residentsByRegion?.showBy : 0)
+  const [showBy, setShowBy] = useState(isPreview ? (pageRef.current?.residentsByRegion?.showBy ?? 0) : 0)
   const [searchText, setSearchText] = useState(undefined);
   const [appliedSearchText, setAppliedSearchText] = useState(undefined)
   const [localeStore] = useContext(LocaleContext);

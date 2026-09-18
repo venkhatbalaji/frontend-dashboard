@@ -48,7 +48,7 @@ function ResidentsByGender({ isPreviewOpen, pageRef, filters, isRtl }) {
     value,
   } = useAsync({ asyncFunction: getResidentsByGender });
 
-  const [showBy, setShowBy] = useState(isPreviewOpen ? pageRef.current?.residentsByGender?.showBy : "overall");
+  const [showBy, setShowBy] = useState(isPreviewOpen ? (pageRef.current?.residentsByGender?.showBy ?? "overall") : "overall");
 
   useEffect(() => {
     pageRef.current.residentsByGender = {

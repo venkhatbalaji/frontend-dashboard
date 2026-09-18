@@ -112,7 +112,7 @@ function ResidentsByEmirate({
     },
   ];
 
-  const [viewBy, setViewBy] = useState(isPreviewOpen ? pageRef.current.residentsByEmirate?.viewBy : viewOptions?.[0]?.value);
+  const [viewBy, setViewBy] = useState(isPreviewOpen ? (pageRef.current.residentsByEmirate?.viewBy ?? viewOptions?.[0]?.value) : viewOptions?.[0]?.value);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const transformedMapData = Object.keys(emirateMap)?.map((value) => {
     const color = resolveTernary(viewBy === "map",

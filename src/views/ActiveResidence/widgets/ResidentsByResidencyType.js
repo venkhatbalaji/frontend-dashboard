@@ -59,7 +59,7 @@ ExpandIcon.propTypes = {
 function ResidentsByResidencyType({ filters, isRtl, isPreviewOpen, pageRef }) {
   const intl = useIntl();
   const getResponsive = useResponsive();
-  const [showBy, setShowBy] = useState(isPreviewOpen ? pageRef.current?.residentsByResidencyType?.showBy : "overview");
+  const [showBy, setShowBy] = useState(isPreviewOpen ? (pageRef.current?.residentsByResidencyType?.showBy ?? "overview") : "overview");
   const themeVariables = useToken();
   const [selectedOptions, setSelectedOptions] = useState(undefined);
 
