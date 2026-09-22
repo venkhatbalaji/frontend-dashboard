@@ -1,12 +1,12 @@
-import Passenger from '@/views/Passenger';
+import Hub from '@/views/Hub';
 import Private from '@/routeGuards/PrivateRoute';
-import Main from '@/layouts/Main';
+import HubLayout from '@/layouts/Hub';
 
-const passenger = () => null;
+const hub = () => null;
 
-passenger.View = Passenger;
-passenger.RouteGuard = Private;
-passenger.Layout = Main;
-passenger.Name = "Passenger_Forecasting"
+hub.View = Hub;
+hub.RouteGuard = Private;
+hub.Layout = HubLayout;
+hub.Name = "Dashboard_Hub"
 
-export default passenger;
+export default hub;

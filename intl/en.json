@@ -797,5 +797,21 @@
   "family_tree_kin_half_brother": "Half-brother",
   "family_tree_kin_half_sister": "Half-sister",
   "family_tree_kin_step_brother": "Step-brother",
-  "family_tree_kin_step_sister": "Step-sister"
+  "family_tree_kin_step_sister": "Step-sister",
+  "Dashboard Hub": "Dashboard Hub",
+  "My Dashboards": "My Dashboards",
+  "Select a dashboard to get started": "Select a dashboard to get started",
+  "All Platforms": "All Platforms",
+  "ICP Suite": "ICP Suite",
+  "Cognos": "Cognos",
+  "Open": "Open",
+  "Not opened yet": "Not opened yet",
+  "Last opened {time}": "Last opened {time}",
+  "No dashboards available": "No dashboards available",
+  "Search dashboards...": "Search dashboards...",
+  "Available to you {count}": "Available to you · {count}",
+  "ICP Dashboards": "ICP Analytics Dashboard",
+  "ICP Dashboards Description": "Passenger, residency, border movement and population analytics for the ICP program.",
+  "Cognos Reporting": "Cognos Reporting",
+  "Cognos Reporting Description": "Enterprise cross-department reports and scheduled exports."
 }

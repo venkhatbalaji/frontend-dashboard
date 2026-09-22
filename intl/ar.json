@@ -784,5 +784,21 @@
   "family_tree_kin_half_brother": "أخ غير شقيق",
   "family_tree_kin_half_sister": "أخت غير شقيقة",
   "family_tree_kin_step_brother": "أخ من زوج/زوجة سابق",
-  "family_tree_kin_step_sister": "أخت من زوج/زوجة سابق"
+  "family_tree_kin_step_sister": "أخت من زوج/زوجة سابق",
+  "Dashboard Hub": "مركز لوحات المعلومات",
+  "My Dashboards": "لوحات المعلومات الخاصة بي",
+  "Select a dashboard to get started": "اختر لوحة معلومات للبدء",
+  "All Platforms": "جميع المنصات",
+  "ICP Suite": "مجموعة ICP",
+  "Cognos": "Cognos",
+  "Open": "فتح",
+  "Not opened yet": "لم يتم فتحها بعد",
+  "Last opened {time}": "آخر فتح {time}",
+  "No dashboards available": "لا توجد لوحات معلومات متاحة",
+  "Search dashboards...": "بحث في لوحات المعلومات...",
+  "Available to you {count}": "متاح لك · {count}",
+  "ICP Dashboards": "لوحات معلومات ICP",
+  "ICP Dashboards Description": "تحليلات الركاب والإقامة وحركة الحدود والسكان لبرنامج الهيئة.",
+  "Cognos Reporting": "تقارير Cognos",
+  "Cognos Reporting Description": "تقارير مشتركة بين الإدارات وعمليات تصدير مجدولة."
 }

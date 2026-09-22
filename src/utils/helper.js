@@ -73,6 +73,7 @@ const nameGroupMapping = {
   Customized_PDF_RISK_REGISTER_STATS: ["ADMIN", "CUSTOMIZED-PDF-RISK-REGISTER-STATS"],
   Customized_PDF_NATIONALITY_STATS: ["ADMIN", "CUSTOMIZED-PDF-NATIONALITY-STATS"],
   Family_Tree: ["ADMIN", "ICP-FAMILY-TREE"],
+  Cognos_Reporting: ["ADMIN", "COGNOS-REPORTING-DASHBOARD"],
 };
 
 export function checkAccess({ groups, pageName }) {

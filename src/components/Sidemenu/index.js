@@ -45,10 +45,10 @@ export const getMenuOptions = (intl, themeVariables, router) => {
       key: "passengerForecasting",
       onClick: () => {
         setTimeout(() => {
-          router.push("/")
+          router.push("/passenger-forecasting")
         }, 100)
       },
-      path: "/",
+      path: "/passenger-forecasting",
       name: ["Passenger_Forecasting"],
       icon: <SuitcaseRolling size={30} />,
       getIcon: (iconProps) => {

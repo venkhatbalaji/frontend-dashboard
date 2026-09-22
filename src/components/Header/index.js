@@ -10,7 +10,8 @@ import {
   Avatar,
   Text,
   Divider,
-  Button
+  Button,
+  Image
 } from "re-usable-design-components";
 import { useIntl } from "react-intl";
 import { LocaleContext } from "@/globalContext/locale/localeProvider";
@@ -104,7 +105,9 @@ const MemoisedDarkModeSwitch = React.memo(DarkModeSwitch);
 function Header({
   style = {},
   areActionsHidden = false,
-  isNavigationDisabled = false
+  isNavigationDisabled = false,
+  title = null,
+  showUaeLogo = false
 }) {
   const intl = useIntl();
   const router = useRouter();
@@ -310,6 +313,23 @@ function Header({
                   />
                 </Col>
               }
+              {
+                showUaeLogo &&
+                <>
+                  <Col flex="none">
+                    <Image
+                      placeholder={false}
+                      preview={false}
+                      style={{ height: getUseResponsive({ default: "40px", mobile: "26px" }), width: "auto" }}
+                      src="/uae_logo.svg"
+                      alt="UAE"
+                    />
+                  </Col>
+                  <Col flex="none">
+                    <Divider style={{ height: "24px" }} color="var(--colorSplit)" type="vertical" />
+                  </Col>
+                </>
+              }
               <Col
                 flex="none"
                 // style={
@@ -325,6 +345,19 @@ function Header({
               >
                 <Logo isNavigationDisabled={isNavigationDisabled} width="auto" height={getUseResponsive({ default: "44px", mobile: "29px" })} />
               </Col>
+              {
+                title &&
+                <>
+                  <Col flex="none">
+                    <Divider style={{ height: "24px" }} color="var(--colorSplit)" type="vertical" />
+                  </Col>
+                  <Col flex="none">
+                    <Text style={{ fontSize: "13px", fontWeight: 600, letterSpacing: ".02em" }} color="var(--colorTextSecondary)">
+                      {title}
+                    </Text>
+                  </Col>
+                </>
+              }
             </Row>
           </Col>
           {
@@ -414,7 +447,9 @@ function Header({
 Header.propTypes = {
   style: PropTypes.object,
   areActionsHidden: PropTypes.bool,
-  isNavigationDisabled: PropTypes.bool
+  isNavigationDisabled: PropTypes.bool,
+  title: PropTypes.node,
+  showUaeLogo: PropTypes.bool
 }
 
 export default Header;
