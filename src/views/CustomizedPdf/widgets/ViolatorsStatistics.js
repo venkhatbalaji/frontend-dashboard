@@ -6,6 +6,7 @@ import translation from "../translation.json";
 import { usePrint } from "@/components/Print";
 import { printDocumentCustomSize } from "@/components/Print/customPdfExport";
 import useAsync from "@/hooks/useAsync";
+import usePersistedCountryTabs from "@/hooks/usePersistedCountryTabs";
 import { LocaleContext } from "@/globalContext/locale/localeProvider";
 import { checkRtl } from "@/utils/helper";
 import { getNationalities } from "@/services/customPdf/riskRegisterStatistics";
@@ -36,8 +37,8 @@ export default function ViolatorsStatistics({ emiratesConfigValue }) {
   const language = localeStore?.projectTranslation || "en";
   const isRtl = checkRtl(localeStore);
   const { geoJsonObj } = useWorldGeoJSON();
-  const [openCountries, setOpenCountries] = useState([]);
-  const [activeTab, setActiveTab] = useState(ALL_TAB_KEY);
+  const [openCountries, setOpenCountries, activeTab, setActiveTab] =
+    usePersistedCountryTabs("violators", ALL_TAB_KEY);
   const [addKey, setAddKey] = useState(0);
 
   const { isCreatingPdf, setIsCreatingPdf } = usePrint({

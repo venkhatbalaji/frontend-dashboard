@@ -10,6 +10,7 @@ import { printDocumentCustomSize } from "@/components/Print/customPdfExport";
 import ExpatsStatisticsEmptyState from "./ExpatsStatisticsEmptyState";
 import NationalityStatisticsCountryPanel from "./NationalityStatisticsCountryPanel";
 import useAsync from "@/hooks/useAsync";
+import usePersistedCountryTabs from "@/hooks/usePersistedCountryTabs";
 import Flags from 'country-flag-icons/react/1x1';
 import useWorldGeoJSON from "@/hooks/useWorldGeoJson";
 import { getNationalities } from "@/services/customPdf/nationalityStatistics";
@@ -32,8 +33,8 @@ export default function NationalityStatistics({ emiratesConfigValue }) {
   const language = localeStore?.projectTranslation || "en";
   const isRtl = checkRtl(localeStore);
   const { geoJsonObj } = useWorldGeoJSON();
-  const [openCountries, setOpenCountries] = useState([]);
-  const [activeCountry, setActiveCountry] = useState();
+  const [openCountries, setOpenCountries, activeCountry, setActiveCountry] =
+    usePersistedCountryTabs("nationality");
   const [addKey, setAddKey] = useState(0);
   const { isCreatingPdf, setIsCreatingPdf } = usePrint({
     name: "Nationality-Statistics.pdf",

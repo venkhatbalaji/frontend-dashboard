@@ -7,6 +7,7 @@ import { usePrint } from "@/components/Print";
 import { printDocumentCustomSize } from "@/components/Print/customPdfExport";
 import { LocaleContext } from "@/globalContext/locale/localeProvider";
 import useAsync from "@/hooks/useAsync";
+import usePersistedCountryTabs from "@/hooks/usePersistedCountryTabs";
 import { getNationalities } from "@/services/customPdf/riskRegisterStatistics";
 import { checkRtl } from "@/utils/helper";
 import Flags from 'country-flag-icons/react/1x1';
@@ -36,8 +37,8 @@ export default function RiskRegisterStatistics() {
   const language = localeStore?.projectTranslation || "en";
   const isRtl = checkRtl(localeStore);
   const { geoJsonObj } = useWorldGeoJSON();
-  const [openCountries, setOpenCountries] = useState([]);
-  const [activeTab, setActiveTab] = useState(ALL_TAB_KEY);
+  const [openCountries, setOpenCountries, activeTab, setActiveTab] =
+    usePersistedCountryTabs("riskRegister", ALL_TAB_KEY);
   const [addKey, setAddKey] = useState(0);
 
   const { isCreatingPdf, setIsCreatingPdf } = usePrint({
