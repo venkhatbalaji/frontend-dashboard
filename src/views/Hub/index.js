@@ -95,14 +95,16 @@ export default function Hub() {
         ) : (
           <>
             {platformTabs?.length > 1 && (
-              <Row
-                style={{
-                  marginBottom: "var(--marginLGPx)",
-                  borderBottom: "1px solid var(--colorSplit)",
-                }}
-              >
+              <Row style={{ marginBottom: "var(--marginLGPx)" }}>
                 <Col style={{ width: "100%" }}>
-                  <Tabs type="line" tabBarGutter={32} activeKey={activeTab} onChange={setSelectedTab} items={tabItems} />
+                  <Tabs
+                    type="line"
+                    tabBarGutter={32}
+                    tabBarStyle={{ borderBottom: "1px solid var(--colorSplit)", marginBottom: 0 }}
+                    activeKey={activeTab}
+                    onChange={setSelectedTab}
+                    items={tabItems}
+                  />
                 </Col>
               </Row>
             )}
