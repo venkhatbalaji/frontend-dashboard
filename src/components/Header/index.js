@@ -107,7 +107,8 @@ function Header({
   areActionsHidden = false,
   isNavigationDisabled = false,
   title = null,
-  showUaeLogo = false
+  showUaeLogo = false,
+  hideSettings = false
 }) {
   const intl = useIntl();
   const router = useRouter();
@@ -234,7 +235,7 @@ function Header({
   }
   const groups = userObj?.groups;
 
-  if (groups?.includes("ADMIN") && getUseResponsive({ default: "false", midTablet: "true" }) === "true") {
+  if (!hideSettings && groups?.includes("ADMIN") && getUseResponsive({ default: "false", midTablet: "true" }) === "true") {
     _options?.push({
       key: "settings",
       label: (
@@ -378,7 +379,7 @@ function Header({
                   </Col>
                 }
                 {
-                  getUseResponsive({ default: "true", midTablet: "false" }) === "true" && (groups?.includes("ADMIN")) && (
+                  !hideSettings && getUseResponsive({ default: "true", midTablet: "false" }) === "true" && (groups?.includes("ADMIN")) && (
                     <Col flex="none">
                       <Button
                         type="text"
@@ -449,7 +450,8 @@ Header.propTypes = {
   areActionsHidden: PropTypes.bool,
   isNavigationDisabled: PropTypes.bool,
   title: PropTypes.node,
-  showUaeLogo: PropTypes.bool
+  showUaeLogo: PropTypes.bool,
+  hideSettings: PropTypes.bool
 }
 
 export default Header;

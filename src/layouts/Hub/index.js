@@ -32,7 +32,7 @@ function Hub({ children }) {
       <Col isFlex>
         <Row style={{ zIndex: 99 }}>
           <Col>
-            <Header showUaeLogo title={intl.formatMessage({ id: "Dashboard Hub" })} />
+            <Header showUaeLogo hideSettings title={intl.formatMessage({ id: "Dashboard Hub" })} />
           </Col>
         </Row>
         <Row
